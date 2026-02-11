@@ -1,301 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forge War Points Calculator - ForgeMaster Helper</title>
-    <meta name="description"
-        content="Calculate expected war points from forging based on your forge level and hammer count in ForgeMaster. Complete game helper tool.">
-    <meta name="theme-color" content="#f59e0b">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="icon" type="image/png" href="icons/hammer.png">
-    <link rel="apple-touch-icon" href="icons/hammer.png">
-    <link rel="manifest" href="manifest.json">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=49">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Race Performance Predictor</title>
+  <meta name="description" content="Predict race times across distances using your recent performance, training volume, and race-day conditions." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
 </head>
-
 <body>
-    <div class="app-container">
-        <!-- Loading Screen Background -->
-        <div class="loading-screen-bg"></div>
+  <div class="bg"></div>
+  <main class="container">
+    <header class="hero">
+      <p class="eyebrow">Smart race planning</p>
+      <h1>Race Performance Predictor</h1>
+      <p class="subtitle">Turn one recent race into realistic forecasts for your next 5K, 10K, Half, or Marathon.</p>
+    </header>
 
-        <!-- Animated Background -->
-        <div class="bg-particles">
-            <div class="particle"></div>
-            <div class="particle"></div>
-            <div class="particle"></div>
-            <div class="particle"></div>
-            <div class="particle"></div>
+    <section class="card grid">
+      <form id="predictorForm" class="panel" aria-label="Race inputs">
+        <h2>Your Inputs</h2>
+
+        <label for="baseDistance">Recent Race Distance</label>
+        <select id="baseDistance" required>
+          <option value="5">5K</option>
+          <option value="10">10K</option>
+          <option value="21.097">Half Marathon</option>
+          <option value="42.195">Marathon</option>
+        </select>
+
+        <label for="baseTime">Recent Race Time</label>
+        <input id="baseTime" type="text" inputmode="numeric" placeholder="HH:MM:SS or MM:SS" value="00:45:00" required />
+
+        <label for="weeklyMileage">Average Weekly Mileage (km)</label>
+        <input id="weeklyMileage" type="number" min="0" max="300" step="1" value="45" required />
+
+        <label for="elevation">Course Elevation Gain (m)</label>
+        <input id="elevation" type="number" min="0" max="3000" step="10" value="120" required />
+
+        <label for="temperature">Race-Day Temperature (°C)</label>
+        <input id="temperature" type="number" min="-10" max="45" step="1" value="14" required />
+
+        <label for="goalStyle">Goal Style</label>
+        <select id="goalStyle" required>
+          <option value="balanced">Balanced</option>
+          <option value="aggressive">Aggressive</option>
+          <option value="conservative">Conservative</option>
+        </select>
+
+        <button type="submit">Predict My Race</button>
+      </form>
+
+      <section class="panel" aria-live="polite">
+        <div class="result-header">
+          <h2>Prediction</h2>
+          <p id="confidenceBadge" class="badge">Confidence: --</p>
         </div>
 
-        <!-- Fixed Coffee Button -->
-        <a href="https://www.buymeacoffee.com/1vcian" target="_blank" rel="noopener noreferrer" class="coffee-overlay">
-            <svg class="coffee-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M18 8h1a4 4 0 0 1 0 8h-1" />
-                <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z" />
-                <path d="M6 1v3" />
-                <path d="M10 1v3" />
-                <path d="M14 1v3" />
-            </svg>
-            <span>Buy me a coffee</span>
-        </a>
+        <div id="primaryResult" class="primary-result">
+          <p class="result-label">Suggested target</p>
+          <h3>10K · 00:00:00</h3>
+          <p id="paceText">Pace: -- /km</p>
+        </div>
 
-        <!-- Header -->
-        <header class="header">
-            <div class="logo">
-                <img src="icons/hammer.png" alt="Hammer" class="logo-icon">
-                <h1>Forge War Points Calculator</h1>
-            </div>
-            <nav class="nav-links nav-grouped">
-                <div class="nav-group">
-                    <span class="nav-group-title">Calculators</span>
-                    <div class="nav-group-links">
-                        <a href="index.html" class="nav-link active">Forge Points</a>
-                        <a href="mounts.html" class="nav-link">Mounts Points</a>
-                        <a href="skills.html" class="nav-link">Skills Points</a>
-                        <a href="eggs.html" class="nav-link">Eggs Hatch</a>
-                        <a href="color.html" class="nav-link">Color Text</a>
-                        <a href="faq.html" class="nav-link">FAQ</a>
-                    </div>
-                </div>
-                <a href="guide.html" class="nav-link nav-guide-btn">📖 Guide</a>
-            </nav>
-            <a href="https://github.com/1vcian/ForgeMasterCalculator" target="_blank" rel="noopener noreferrer"
-                class="github-link">
-                <svg class="github-icon" viewBox="0 0 24 24" fill="currentColor">
-                    <path
-                        d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
-                </svg>
-                Visit project
-            </a>
-            <p class="subtitle">Calculate your expected war points from forging</p>
-        </header>
+        <div id="distanceCards" class="distance-cards"></div>
 
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Mode Toggle -->
-            <div class="mode-toggle">
-                <button class="mode-btn active" data-mode="calculate" id="calcModeBtn">
-                    <span class="game-icon hammer-icon"></span>
-                    Calculate Points
-                </button>
-                <button class="mode-btn" data-mode="target" id="targetModeBtn">
-                    <span class="game-icon star"></span>
-                    Find Hammers
-                </button>
-            </div>
+        <h3>5K Split Plan</h3>
+        <div id="splits" class="splits"></div>
 
-            <!-- Calculator Card -->
-            <div class="calculator-card">
-                <!-- Forge Level Selector -->
-                <div class="input-group">
-                    <label for="forgeLevel">
-                        <span class="game-icon hammer-icon"></span>
-                        Forge Level
-                    </label>
-                    <div class="select-wrapper">
-                        <select id="forgeLevel">
-                            <!-- Options will be generated by JS -->
-                        </select>
-                        <svg class="select-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <path d="M6 9l6 6 6-6" />
-                        </svg>
-                    </div>
-                </div>
+        <h3>Race Readiness</h3>
+        <div class="meter-wrap">
+          <div id="readinessBar" class="meter-bar"></div>
+        </div>
+        <p id="insightText" class="insight"></p>
+      </section>
+    </section>
+  </main>
 
-                <!-- Free Summon Percentage -->
-                <div class="input-group">
-                    <label for="freeSummonPercent">
-                        <span class="game-icon star"></span>
-                        Free Forge % (0-100)
-                    </label>
-                    <input type="number" id="freeSummonPercent" min="0" max="100" value="0"
-                        placeholder="Enter free forge percentage">
-                </div>
-
-                <!-- Hammer Count Input (Calculate Mode) -->
-                <div class="input-group" id="hammerInputGroup">
-                    <label for="hammerCount">
-                        <span class="game-icon hammer-icon"></span>
-                        Number of Hammers
-                    </label>
-                    <input type="number" id="hammerCount" min="1" max="10000" value="100"
-                        placeholder="Enter hammer count">
-                </div>
-
-                <!-- Coin Calculator Inputs -->
-                <div class="input-group" id="coinInputs">
-                    <label style="margin-bottom: 0.5rem; display: block; line-height: 1.3;">
-                        <span class="game-icon coin-icon"></span>
-                        Coin Calculator <br>
-                        <span style="font-size: 0.85rem; font-weight: 400; opacity: 0.7;">
-                            Enter "Max Item Lvl" seen in-game from a forge AND "Price % Bonus" from tech tree.
-                        </span>
-                    </label>
-                    <div class="split-inputs two-cols">
-                        <div class="input-wrapper">
-                            <label for="maxItemLevel">
-                                <span class="game-icon star"></span>
-                                Max Item Lvl
-                            </label>
-                            <input type="number" id="maxItemLevel" min="1" max="200" value="100"
-                                placeholder="Max Level">
-                        </div>
-                        <div class="input-wrapper">
-                            <label for="priceBonus">
-                                <span class="game-icon coin-icon"></span>
-                                Price % Bonus
-                            </label>
-                            <input type="number" id="priceBonus" min="0" max="5000" value="0" placeholder="Bonus %">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Target EXP Input (Target Mode) -->
-                <div class="input-group hidden" id="targetInputGroup">
-                    <label for="targetExp">
-                        <span class="game-icon star"></span>
-                        Target War Points
-                    </label>
-                    <input type="number" id="targetExp" min="1" max="100000" value="1000"
-                        placeholder="Enter target war points">
-                </div>
-
-
-            </div>
-
-            <!-- Results Card -->
-            <div class="results-card" id="resultsCard">
-                <h2 class="results-title">
-                    <svg class="title-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M3 3v18h18" />
-                        <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3" />
-                    </svg>
-                    Results
-                </h2>
-
-                <!-- Calculate Mode Results -->
-                <div class="results-content" id="calcResults">
-                    <div class="result-item highlight">
-                        <span class="result-label">Expected War Points</span>
-                        <span class="result-value" id="expectedExp">0</span>
-                    </div>
-                    <div class="result-item">
-                        <span class="result-label">War Points per Hammer</span>
-                        <span class="result-value" id="expPerHammer">0</span>
-                    </div>
-                    <div class="result-item highlight-alt">
-                        <span class="result-label">Est. Coins</span>
-                        <span class="result-value" id="estimatedCoins">0 - 0</span>
-                    </div>
-                </div>
-
-                <!-- Target Mode Results -->
-                <div class="results-content hidden" id="targetResults">
-                    <div class="result-item highlight">
-                        <span class="result-label">Recommended Hammers</span>
-                        <span class="result-value" id="recommendedHammers">0</span>
-                    </div>
-                    <div class="result-item">
-                        <span class="result-label">Expected War Points with this amount</span>
-                        <span class="result-value" id="expectedWithRecommended">0</span>
-                    </div>
-                </div>
-
-                <!-- Probability Breakdown -->
-                <div class="probability-breakdown">
-                    <h3 class="breakdown-title">
-                        <svg class="title-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                            <path d="M3 9h18" />
-                            <path d="M9 21V9" />
-                        </svg>
-                        Probability Breakdown
-                    </h3>
-                    <div class="probability-grid" id="probabilityGrid">
-                        <!-- Will be populated by JS -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- Info Card -->
-            <div class="info-card">
-                <h3>
-                    <span class="game-icon star"></span>
-                    War Points Values
-                </h3>
-                <div class="exp-table">
-                    <div class="exp-row">
-                        <span class="age-icon primitive"></span>
-                        <span class="tier primitive">Primitive</span>
-                        <span class="exp-value">1 pt</span>
-                    </div>
-                    <div class="exp-row">
-                        <span class="age-icon medieval"></span>
-                        <span class="tier medieval">Medieval</span>
-                        <span class="exp-value">1 pt</span>
-                    </div>
-                    <div class="exp-row">
-                        <span class="age-icon early-modern"></span>
-                        <span class="tier early-modern">Early-Modern</span>
-                        <span class="exp-value">1 pt</span>
-                    </div>
-                    <div class="exp-row">
-                        <span class="age-icon modern"></span>
-                        <span class="tier modern">Modern</span>
-                        <span class="exp-value">2 pts</span>
-                    </div>
-                    <div class="exp-row">
-                        <span class="age-icon space"></span>
-                        <span class="tier space">Space</span>
-                        <span class="exp-value">2 pts</span>
-                    </div>
-                    <div class="exp-row">
-                        <span class="age-icon interstellar"></span>
-                        <span class="tier interstellar">Interstellar</span>
-                        <span class="exp-value">2 pts</span>
-                    </div>
-                    <div class="exp-row">
-                        <span class="age-icon multiverse"></span>
-                        <span class="tier multiverse">Multiverse</span>
-                        <span class="exp-value">3 pts</span>
-                    </div>
-                    <div class="exp-row">
-                        <span class="age-icon quantum"></span>
-                        <span class="tier quantum">Quantum</span>
-                        <span class="exp-value">3 pts</span>
-                    </div>
-                    <div class="exp-row">
-                        <span class="age-icon underworld"></span>
-                        <span class="tier underworld">Underworld</span>
-                        <span class="exp-value">3 pts</span>
-                    </div>
-                    <div class="exp-row">
-                        <span class="age-icon divine"></span>
-                        <span class="tier divine">Divine</span>
-                        <span class="exp-value">3 pts</span>
-                    </div>
-                </div>
-            </div>
-        </main>
-
-        <!-- Footer -->
-        <footer class="footer">
-            <p>ForgeMaster Helper • Last update: 31/12/2025</p>
-            <p style="font-size: 0.75rem; opacity: 0.6;">Created by <a href="https://1vcian.me" target="_blank"
-                    style="color: inherit;">Lucian Medrihan</a></p>
-        </footer>
-    </div>
-
-
-
-    <script src="app.js"></script>
+  <script src="app.js"></script>
 </body>
-
 </html>
